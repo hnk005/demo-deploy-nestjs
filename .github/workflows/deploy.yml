@@ -24,7 +24,6 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           envs: APP_ENV_FILE
           script: |
-            # Di chuyển vào thư mục project trên server
             cd /var/www/nestjs-boilerplate
 
             # Cập nhật code mới nhất từ git
@@ -40,6 +39,9 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
+            # Di chuyển vào thư mục project trên server
+            cd /var/www/nestjs-boilerplate
+
             pnpm run test
             pnpm run test:e2e
       - name: Run server with docker
@@ -50,6 +52,8 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
+            cd /var/www/nestjs-boilerplate
+
             # Build Docker Image
             docker build -t nest-app-image .
 
