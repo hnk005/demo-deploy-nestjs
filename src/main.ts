@@ -51,7 +51,6 @@ async function bootstrap() {
   app.useGlobalFilters(new ProblemDetailsFilter());
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
-  logger.log(isProduction);
   if (!isProduction) {
     setupSwagger(app, configService);
   }
