@@ -8,7 +8,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-import { AppModule } from './app.module.js';
+import { AppModule, IS_PRODUCTION } from './app.module.js';
 import { AllConfigType } from './constants/config.type.js';
 import validationOptions from './common/validation/validation-options.js';
 import { ProblemDetailsFilter } from './filter/problem-details.filter.js';
@@ -19,8 +19,7 @@ async function bootstrap() {
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   const configService = app.get(ConfigService<AllConfigType>);
-  const isProduction =
-    configService.getOrThrow('app.nodeEnv', { infer: true }) === 'production';
+  const isProduction = app.get(IS_PRODUCTION);
   const corsOrigins = configService.getOrThrow('app.corsOrigins', {
     infer: true,
   });
@@ -52,7 +51,10 @@ async function bootstrap() {
   app.useGlobalFilters(new ProblemDetailsFilter());
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
-  setupSwagger(app, configService);
+  logger.log(isProduction);
+  if (!isProduction) {
+    setupSwagger(app, configService);
+  }
 
   await app.listen(port, () =>
     logger.log(`Application is running on: ${serverUrl}`),
